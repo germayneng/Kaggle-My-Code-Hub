@@ -1,2 +1,2 @@
 # Kaggle
-Kaggle submissions
+Rmarkdown code hub for my Kaggle submissions
