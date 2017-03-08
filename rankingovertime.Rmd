@@ -1,0 +1,61 @@
+---
+title: "My University's Ranking Over Time"
+date: "February 1, 2017"
+output: html_document
+---
+
+
+# Inspird by Myles O Neil's Python script, I decided to do one in R 
+
+
+Fork this script and Change variable to your university's name to display the plot 
+
+```{r}
+my.University <- "Nanyang Technological University"
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE)
+```
+
+```{r Load-libraries}
+library(plotly)
+```
+
+```{r Loading-datasets}
+cwur <- read.csv("cwurData.csv", stringsAsFactors = F, header = T)
+times <- read.csv("timesData.csv", stringsAsFactors = F, header = T)
+shanghai <- read.csv("shanghaiData.csv", stringsAsFactors = F, header = T)
+```
+
+Extract your university defined above out from the data frame
+```{r Data-Extracting}
+cwur.extract <- cwur[cwur$institution == my.University,]
+times.extract <- times[times$university_name == my.University,]
+shanghai.extract <- shanghai[shanghai$university_name == my.University,]
+```
+
+However, for the world_rank found in the dataframe of Times, they are in character format. We need to conver them to numeric. Similarly, the one found in Shanghai ranking is in range format. We will take the mean of the range.
+
+
+```{r Data-cleaning}
+# converting world_rank in times to numeric 
+z <- as.numeric(times.extract$world_rank)
+times.extract[,1] = z 
+
+# converting world_rank ranges in shanghai data to mean numeric  
+c <- shanghai.extract$world_rank
+split.values <- sapply(strsplit(c, "-"),
+                     function(x)mean(as.numeric(x)))
+shanghai.extract[,1] <- split.values
+```
+
+```{r plotly-output}
+plot_ly(data= cwur.extract, x= ~year, y = ~world_rank,name ='CWUR', type='scatter', mode='lines') %>% 
+  add_trace(data = times.extract, y = ~world_rank, name= 'Times') %>% 
+  add_trace(data=shanghai.extract, y=~world_rank, name = 'Shanghai') %>% 
+  layout(title = 'University Ranking Over Time')
+```
+
