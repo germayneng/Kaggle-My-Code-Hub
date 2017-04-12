@@ -2,7 +2,7 @@
 Rmarkdown code hub for my Kaggle submissions / Practice 
 
 [Submissions](#submissions)
-[Practices]()
+[Practices](#practices)
 
 ---
 
