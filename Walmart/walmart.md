@@ -1,10 +1,24 @@
 # Kaggle-Walmart_Store_Sales_Forecasting
 
 
+---
+
+# Table of Contents 
+
+---
 
 # Competition Details 
 
 * https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting
+
+
+---
+
+# Methods
+
+
+
+---
 
 # References 
 
