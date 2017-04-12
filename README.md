@@ -8,7 +8,7 @@ Rmarkdown code hub for my Kaggle submissions / Practice
 
 # Submissions
 
-## **World University Ranking**
+### World University Ranking
 
 
 [Dataset](https://www.kaggle.com/mylesoneill/world-university-rankings)
