@@ -1,8 +1,8 @@
 # Kaggle
 Rmarkdown code hub for my Kaggle submissions / Practice 
 
-[Submissions]
-[Practices]
+[Submissions](#submissions)
+[Practices]()
 
 ---
 
@@ -10,6 +10,6 @@ Rmarkdown code hub for my Kaggle submissions / Practice
 
 **World University Ranking**
 <br>
-[Dataset:](https://www.kaggle.com/mylesoneill/world-university-rankings)
+[Dataset](https://www.kaggle.com/mylesoneill/world-university-rankings)
 <br>
-[Contribution:]  
+[Contribution]  
