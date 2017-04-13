@@ -21,3 +21,4 @@ The walmart data set is a weekly dataset that captures the store sales. Most par
 * Ensemble Learning
   + http://ellisp.github.io/blog/2016/11/06/forecastxgb
   + https://www.r-bloggers.com/an-intro-to-ensemble-learning-in-r/
+  + http://machinelearningmastery.com/machine-learning-ensembles-with-r/
