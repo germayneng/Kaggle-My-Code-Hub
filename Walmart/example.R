@@ -12,7 +12,7 @@
 library(data.table)
 library(forecast)
 library(ggplot2)
-
+library(forecastxgb) # still on trial, unstable 
 
 
 train <- fread('train_sample.csv')
@@ -58,6 +58,7 @@ count <- 0
 
 #' set count to capture how many iteration of optimal k (lowest aicc)
 #' max i 25. 
+#' we set seasonal = false probably due to having the fourier term to handle seasonality
 
 for(i in 1:25)
 {
@@ -81,6 +82,24 @@ nnet.model <- store.weekly %>% nnetar()
 nnet.fcast <- forecast(nnet.model, h=39)
 
 
+
+
+#' ================================
+#' =====Xgboost autoregression===== 
+#' ================================
+#' https://github.com/ellisp/forecastxgb-r-package
+
+
+model <- xgbar(store.weekly) # data is stationary, no need for trend differencing   
+fcast.xgb <- forecast(model, h=39) 
+
+
+
+
+
+
+
+
 #' ================================
 #' ===============plots============ 
 #' ================================
@@ -92,8 +111,8 @@ autolayer(tbats.forecast$mean, series = 'tbats') +
 autolayer(ets.model$mean, series = 'ets') + 
 autolayer(arima.model$mean, series = 'arima') + 
 autolayer(naive.model$mean, series = 'naive') +
-autolayer(nnet.fcast$mean, series = 'nnet')
-
+autolayer(nnet.fcast$mean, series = 'nnet') +
+autolayer(fcast.xgb$mean, series = 'xgboost')
 
 
 #' comments: the regression with arima errors using fourier terms is bad. Based on Ljung, there is 
