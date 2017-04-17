@@ -22,9 +22,9 @@ As mentioned above, it will make more sense to use different models to do the fo
 Here is the chart plot of the ensemble of models: 
 ![example_ensemble](https://cloud.githubusercontent.com/assets/22788747/25085263/cebe3016-2393-11e7-80bf-c5482a41687c.png)
 
+Interestingly, naive performs extremely well on its own. Other good performer is the ensemble of ETS,ARIMA.Naive and xgboost. Neural network is indeed disappointing. One point to note that in other for me to evaluate ensemble learning, I have to take roughly 94% of trainset to model and test against the remaining 6% as test set. This is because ets function is returning different order (ANN) instead of AAN when using 100% of the data.  
 
-
-
+Although naive is pretty good, but I will prefer the 4 combined model for the actual forecasting. :) 
 
 
 ---
