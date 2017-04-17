@@ -20,10 +20,8 @@ As mentioned above, it will make more sense to use different models to do the fo
 * Xgboost 
 
 Here is the chart plot of the ensemble of models: 
-
-<p align="center">
 ![example_ensemble](https://cloud.githubusercontent.com/assets/22788747/25085263/cebe3016-2393-11e7-80bf-c5482a41687c.png)
-</p>
+
 
 
 
