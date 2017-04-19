@@ -10,6 +10,14 @@ Code hub for my Kaggle submissions / Practice. My personal learning journey. I a
 
 ---
 
+# Competitions 
+
+### Group 
+
+https://github.com/GA-datascience
+
+---
+
 # Submissions
 
 ### World University Ranking
@@ -18,3 +26,10 @@ Code hub for my Kaggle submissions / Practice. My personal learning journey. I a
 [Dataset](https://www.kaggle.com/mylesoneill/world-university-rankings)
 <br>
 [Contribution]
+
+
+---
+
+# Practices 
+
+### Walamrt forecasting 
