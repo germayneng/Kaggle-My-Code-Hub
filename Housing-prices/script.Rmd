@@ -1,0 +1,486 @@
+---
+title: "Housing Price Practice"
+author: "germayne"
+date: "April 21, 2017"
+output: 
+  html_document:
+    highlight: pygments
+    theme: spacelab
+    toc: True
+---
+
+```{r loading-libraries, warning=FALSE, include=FALSE}
+library(data.table)
+library(corrplot)
+library(plotly)
+library(ggplot2)
+library(caret)
+library(Metrics)
+library(lmtest) # bp 
+library(rms) # robust correction 
+######################################
+library(lars) # lasso
+#####################################
+library(randomForest)
+library(party) 
+#####################################
+
+library(xgboost)
+library(Matrix)
+#####################################
+library(e1071)
+
+
+random = 12357
+```
+
+
+# Cleaning and Features
+
+
+## Cleaning 
+
+Lets load in the data, as well as check the 81 variables that we have. 
+
+
+```{r loading-data}
+
+train <- fread('train.csv', stringsAsFactors = TRUE)
+train <- data.frame(train)
+test <- fread('test.csv', stringsAsFactors = TRUE)
+test <- data.frame(test)
+names(train)
+
+# apply class to each element by columns 
+sapply(train, class)
+```
+
+## Missing values 
+
+It is important to make it a practice to check for missing values. If a particular variable has too many missing values, we may have to remove it 
+
+```{r}
+#Num_NA<-sapply(train,function(x)length(which(is.na(x)==T)))
+Num_NA <- apply(train, 2, function(x)length(which(is.na(x)==T)))
+missing.df <- data.frame(colnames(train), Num_NA)
+missing.df <- missing.df[order(missing.df$Num_NA, decreasing = TRUE),]
+head(missing.df, 10)
+```
+
+
+
+We can see the top variables with NA. We have to remove them. Lets remove: 
+
+* poolqc
+* Miscfeature
+* alley 
+* fence
+
+```{r}
+train$PoolQC <- NULL
+train$MiscFeature <- NULL 
+train$Alley <- NULL
+train$Fence <- NULL
+
+test$PoolQC <- NULL
+test$MiscFeature <- NULL
+test$Alley <- NULL
+test$Fence <- NULL
+```
+
+
+## Features 
+
+```{r}
+# extract all numerical variables 
+all.numeric.variables.index <- sapply(train,is.numeric)
+all.numeric.variables <- train[,all.numeric.variables.index]
+
+# convert all factors into numericals variables
+for(i in 1:length(colnames(train))){
+  if(is.factor(train[,i])){
+    train[,i] <- as.integer(train[,i])
+  }
+}
+
+
+# lets check
+sapply(train, class)
+
+
+
+# do the same for the test set so we can use it later on: 
+for(i in 1:length(colnames(test))){
+  if(is.factor(test[,i])){
+    test[,i] <- as.integer(test[,i])
+  }
+}
+
+```
+
+Now, we will need to fill all the remaining NA as 0
+
+
+```{r}
+train[is.na(train)] <- 0
+all.numeric.variables[is.na(all.numeric.variables)] <- 0
+
+# do the same to test
+test[is.na(test)] <- 0 
+```
+
+
+
+# Analysis 
+
+Focus the initial analysis on the numeric variables (not the ones we turned from factors to numerical)
+Since we do not need the id column for the correlation, we can remove it 
+```{r, out.width='1000px', dpi = 300 }
+correlation.df <- cor(all.numeric.variables[,-1])
+corrplot(correlation.df, method = "color", tl.cex = 0.5, type = "lower", sig.level = 0.05, insig = "blank", order = "hclust", addCoef.col = "black", number.cex = 0.35 ,diag = FALSE )
+```
+
+Seems like we have some variables that have strong relationship with each other. The suspects are:
+
+* Overallqual
+* Total bmstfs
+* x1st 
+* garrage area
+* garrage cars
+* GrlivArea
+
+```{r}
+pairs(~SalePrice+OverallQual+TotalBsmtSF+X1stFlrSF+GarageArea+GarageCars+GrLivArea , data = train)
+```
+
+Very obvious that multicollinearity exist in this variables. 
+
+## Sales Price analysis 
+
+
+```{r}
+plot_ly(all.numeric.variables, x = ~YearBuilt, y= ~SalePrice,type = 'scatter', mode = 'markers', name = "scatter") %>%
+add_trace(y = fitted(lm(train$SalePrice ~ train$YearBuilt)), mode = 'lines', line = list(shape = "spline", smoothing = 1), name = 'smooth')
+
+```
+
+
+
+```{r}
+#ggplot(train, aes(x= YearBuilt, y = SalePrice)) + geom_point() + geom_smooth()
+```
+
+A general upward trend the older the house, the higher the price level of the house.
+
+
+
+# Modelling   
+
+
+Lets do a partition using **caret** package to prep the train set, before we go into the modelling aspect. 
+
+```{r}
+set.seed(random)
+outcome <- train$SalePrice
+partition <- createDataPartition(y= outcome, p= 0.599, list =F)
+# split train into 2: 6:4 
+training_split <- train[partition,]
+testing_split <- train[-partition,]
+```
+
+
+## Linear Regression Model 
+
+
+Most basic model will be the regression model. We start by fitting all the variables to have a look: 
+
+```{r model-regression}
+reg.model <- lm(SalePrice ~. , data = training_split)
+summary(reg.model)
+```
+
+Very good R-square value, which says that the explainatory variables are explaining SalePrices well. At the same time, there are many variables which have no effect on SalePrices. We can now implement the stepwise algorithm for variable selection, based on AIC values.
+
+```{r, include=FALSE, warning=FALSE, echo=FALSE}
+null <- lm(SalePrice ~ 1, data = training_split)
+full <- reg.model
+step(null, scope = list(lower=null,upper=full), direction="forward")
+```
+
+```{r}
+reg.model.2 <- lm(formula = SalePrice ~ OverallQual + GrLivArea + YearBuilt + 
+    KitchenQual + BsmtFullBath + MSSubClass + GarageCars + LotArea + 
+    ExterQual + OverallCond + PoolArea + WoodDeckSF + Exterior1st + 
+    BsmtQual + BsmtCond + Fireplaces + MasVnrType + MasVnrArea + 
+    YrSold + ScreenPorch + Street + SaleCondition + GarageFinish + 
+    BsmtFinType2 + BsmtFinType1 + BsmtFinSF2 + TotRmsAbvGrd + 
+    LandSlope + EnclosedPorch + Functional + BedroomAbvGr + Neighborhood + 
+    KitchenAbvGr + X1stFlrSF + FullBath + Exterior2nd + BsmtExposure + 
+    Condition1, data = training_split)
+
+summary(reg.model.2)
+```
+
+
+Now, the model looks very good, and all the variables have an effect on SalePrice, 
+Let us check the RMSE metric defined by kaggle.
+
+We do this by doing a out of sample comparison: We obtain the prediction by using our model on the testing_split data set and compare with the actual test_split data value. 
+
+Some residual diagnosis: heteroskadesticity presence
+
+We can plot residual vs fitted values to see if there is any pattern: if there is, heteroskadesticity is present. 
+
+In fact, we can use a code to check: 
+
+```{r}
+bptest(reg.model.2)
+
+
+model <- ols(SalePrice ~ OverallQual + GrLivArea + YearBuilt + 
+    KitchenQual + BsmtFullBath + MSSubClass + GarageCars + LotArea + 
+    ExterQual + OverallCond + PoolArea + WoodDeckSF + Exterior1st + 
+    BsmtQual + BsmtCond + Fireplaces + MasVnrType + MasVnrArea + 
+    YrSold + ScreenPorch + Street + SaleCondition + GarageFinish + 
+    BsmtFinType2 + BsmtFinType1 + BsmtFinSF2 + TotRmsAbvGrd + 
+    LandSlope + EnclosedPorch + Functional + BedroomAbvGr + Neighborhood + 
+    KitchenAbvGr + X1stFlrSF + FullBath + Exterior2nd + BsmtExposure + 
+    Condition1 + Id, data = training_split, x = TRUE)
+reg.model.2.corrected <- robcov(model)
+reg.model.2.corrected
+
+```
+
+
+
+With the correction done (it does not affect the result since it only make changes to the t statistic values), we can know assess the model via the kaggle metric: RMSE on the log values 
+
+```{r}
+prediction.reg <- predict(reg.model.2.corrected, testing_split)
+rmse.reg <- data.frame(log(prediction.reg), log(testing_split$SalePrice))
+rmse(rmse.reg$log.prediction.reg.,rmse.reg$log.testing_split.SalePrice.)
+```
+
+
+## Least absolute shrinkage and selection operator Regression
+
+LASSO regression can help reduce multicollinearity: Similar to the xgboost function, we need to ensure they are in matrix form. 
+
+```{r}
+covariate.variable <- as.matrix(training_split[,1:76]) # exclude y 
+dependent.variable <- as.matrix(training_split[,77])
+testing.variable <- as.matrix(testing_split[,1:76])
+lasso <- lars(covariate.variable, dependent.variable, type = 'lasso')
+plot(lasso)
+```
+
+Since we need the least multicolliearity, we can use **marrow's cp**, and we obtain the least value from our lasso model we ran, and use this value in the prediction function
+
+```{r}
+optimal.step <- lasso$df[which.min(lasso$Cp)]
+prediction.lasso <- predict.lars(lasso, newx = testing.variable, s = optimal.step, type = "fit" )
+
+rmse.lasso <- data.frame(test = log(testing_split$SalePrice), lasso = log(prediction.lasso$fit))
+rmse(rmse.lasso$test,rmse.lasso$lasso)
+```
+
+Looking good with the improvement :) 
+
+
+
+## Random Forest: Regression 
+
+
+```{r}
+rf <- randomForest(SalePrice ~. , data = training_split)
+plot(rf)
+importance(rf)
+prediction.rf <- predict(rf, newdata = testing_split)
+
+rmse.rf <- data.frame(test = log(testing_split$SalePrice), rf = log(prediction.rf) )
+rmse(rmse.rf$test,rmse.rf$rf)
+```
+
+Very good prediction here! 
+
+## XGboost
+
+One of the most powerful algorithm here. Let us try this out in this dataset!
+
+### Data prep 
+
+For the data to be used in xgboost, wwe must ensure that they are in sparse matrix form. 
+
+```{r xg-boost}
+training_split.sparse <- sparse.model.matrix(SalePrice ~. -1  , data = training_split[2:77]) # removing sales price as well as id 
+d_train <- xgb.DMatrix(data = training_split.sparse, label = training_split$SalePrice )
+
+
+testing_split.sparse <- sparse.model.matrix(SalePrice~. -1, data = testing_split[2:77])
+d_valid <- xgb.DMatrix(data = testing_split.sparse, label = testing_split$SalePrice)
+
+```
+
+
+### Parameter tuning
+
+
+Using cross validation, we can obtain the optimal nrounds based on these parameters that we fixed. We define the early stopping round to be 50, and this meant that if there are no improvement for 50 boosting rounds, the iteration will stop. That is the optimal nrounds which we will use. 
+
+```{r cv-params}
+
+param.cv <- list(
+  seed = random,
+  objective="reg:linear",
+  booster="gbtree",
+  eta=0.1, 
+  max.depth=8, 
+  subsample=0.8, 
+  colsample_bytree = 0.7,
+  num_parallel_tree = 1,
+  min_child_weight = 1
+)
+
+
+checking <- xgb.cv(data = d_train, params = param.cv, early_stopping_rounds = 50,
+                   nrounds = 1000, verbose = 1, nfold = 5, metrics = "rmse", print_every_n = 50)
+```
+
+
+### Running the xgboost model 
+
+```{r xgboost-run-model}
+
+
+param <- list(
+  seed = random,
+  objective="reg:linear",
+  booster="gbtree",
+  eta=0.1, 
+  max.depth=8, 
+  subsample=0.8,
+  colsample_bytree = 0.7,
+  num_parallel_tree = 1,
+  min_child_weight = 1,
+  eval_metric = "rmse"
+)
+
+watchlist = list(train = d_train, test = d_valid)
+xgmodel <- xgb.train(params = param, data = d_train, nrounds = 319, watchlist = watchlist, verbose = 1, print_every_n = 50)
+
+
+d_test <- xgb.DMatrix(data = testing_split.sparse)
+xgb.predict <- predict(xgmodel, d_test)
+rmse(log(testing_split$SalePrice),log(xgb.predict))
+
+```
+
+### Feature importance 
+
+
+Usually after we are done with a xgboost modelling, it will be good to take look at the f scores for the feature importance: 
+
+```{r xgboost-feature-importance}
+feature.importance <- xgb.importance(model = xgmodel)
+head(feature.importance,10)
+xgb.plot.importance(importance_matrix = feature.importance)
+colnames(train)[15]
+```
+
+So feature 15 is deemed very important by xgboost, 
+
+
+## Ensemble of model 
+
+Simply ensemble. More is better than 1.  
+(perhaps in future, I can do a comparison for all the different combination)
+
+```{r simple-ensemble}
+rmse.ensemble <- data.frame(test = log(testing_split$SalePrice), prediction = log(( prediction.rf + prediction.lasso$fit + xgb.predict) / 3))
+rmse(rmse.ensemble$test, rmse.ensemble$prediction)
+```
+
+## SVM
+
+```{r implmenting-svm}
+model.svm <- svm(SalePrice ~. , training_split, type = "nu-regression", gamma = 0.01, cost = 3)
+
+prediction.svm <- predict(model.svm, testing_split)
+
+rmse(log(testing_split$SalePrice), log(prediction.svm))
+```
+
+
+
+
+
+## Submission 
+
+
+Let us retrain all the model on the entire training set, and have our test data set to fit on it. (I did not use regression in the end as it lower the overall)
+
+```{r retrain-regression}
+reg.model.full <- lm(formula = SalePrice ~ OverallQual + GrLivArea+YearBuilt + KitchenQual + BsmtFullBath + MSSubClass + GarageCars + LotArea + ExterQual + OverallCond + PoolArea + WoodDeckSF + Exterior1st + BsmtQual + BsmtCond + Fireplaces + MasVnrType + MasVnrArea + 
+    YrSold + ScreenPorch + Street + SaleCondition + GarageFinish + 
+    BsmtFinType2 + BsmtFinType1 + BsmtFinSF2 + TotRmsAbvGrd + 
+    LandSlope + EnclosedPorch + Functional + BedroomAbvGr + Neighborhood + 
+    KitchenAbvGr + X1stFlrSF + FullBath + Exterior2nd + BsmtExposure + 
+    Condition1, data = train)
+
+
+prediction.reg.full <- predict(reg.model.full,test)
+```
+
+
+
+```{r retrain-lasso-regression}
+# create matrix of data sets 
+
+train.covariates <- as.matrix(train[,1:76])
+train.outcome <- as.matrix(train[,77])
+test.matrix <- as.matrix(test[,1:76])
+
+lasso.full <- lars(train.covariates, train.outcome, type = "lasso")
+
+# obtain minimize cp 
+best.s <- lasso.full$df[which.min(lasso.full$Cp)]
+
+# predict 
+prediction.lasso.full <- predict.lars(lasso.full, newx = test.matrix, s = best.s, type = "fit")
+```
+
+
+```{r retrain-rf}
+
+rf.full <- randomForest(SalePrice ~., data = train)
+prediction.rf.full <- predict(rf.full, test)
+```
+
+
+```{r retrain-xgboost}
+# loading in the full train and test set 
+training.sparse <- sparse.model.matrix(SalePrice ~. -1, data = train[2:77])
+training <- xgb.DMatrix(training.sparse, label = train[,"SalePrice"])
+
+testing <- xgb.DMatrix(data.matrix(test[,2:76]))
+
+
+xgbmodel.full <- xgb.train(data = training, params = param, nrounds = 319, watchlist = list(train = training), verbose = 1, print_every_n = 50)
+
+xgb.predict.full <- predict(xgbmodel.full, testing)
+
+```
+
+```{r retrain-svm}
+
+model.svm.full <- svm(SalePrice ~. , train, type = "nu-regression", gamma = 0.01, cost =3)
+prediction.svm.full <- predict(model.svm.full, test)
+```
+
+
+```{r submission}
+ensemble.price <- (xgb.predict.full + prediction.rf.full +  prediction.lasso.full$fit) / 3
+submission <- data.frame(Id = test$Id, SalePrice = ensemble.price)
+write.csv(submission,'submission.csv', row.names = FALSE)
+```
+
