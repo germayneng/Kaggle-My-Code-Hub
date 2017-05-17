@@ -6,7 +6,7 @@ Competition Details:
 
 ---
 
-## Solutions
+## Summary
 The walmart data set is a weekly dataset that captures the store sales. Most participants did the forecasting without using the additional features. A general idea is to create various models and perform ensemble learning. 
 
 For my solution, I make use of a particular department of a store, i.e store 1 - department 10. For this competition, you will have to isolate each store-department, model the forecast, then combine them back to a dataframe. Since this is for learning purposes, I will only work on store1-department 10: consisting of 143 weekly data points. 
