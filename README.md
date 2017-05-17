@@ -7,4 +7,4 @@ Code hub for my Kaggle submissions / Practice. My personal learning journey. I a
 
 Name | Description | Link | Type | Ranking 
 --- | --- | --- | --- | ---
-Quora Question Pairs | Can you identify question pairs with same intent? | https://www.kaggle.com/c/quora-question-pairs | NLP | top 12%
+[Quora Question Pairs](https://github.com/GA-datascience/Kaggle-Quora) | Can you identify question pairs with same intent? | https://www.kaggle.com/c/quora-question-pairs | NLP | top 12%
