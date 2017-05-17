@@ -11,7 +11,7 @@ Name | Description | Link | Category | Ranking
 
 # Kernels 
 Name | Kernel Description  | Link |   
---- | --- | --- | --- 
+--- | --- | --- 
 Credit Card Fraud Detection | Predicting fraud probability | https://www.kaggle.com/dalpozz/creditcardfraud
 World Univeristy Ranking | Predictive modelling | https://www.kaggle.com/germmie/your-university-ranking-over-time
 World Univeristy Ranking | Simple ranking chart for any specified university | https://www.kaggle.com/germmie/your-university-ranking-over-time
