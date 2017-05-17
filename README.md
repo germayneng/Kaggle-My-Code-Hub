@@ -6,5 +6,5 @@
 Code hub for my Kaggle submissions / Practice. My personal learning journey. I am currently also participating in competitions with my friend.  
 
 Name | Description | Link | Type | Ranking 
---- | --- | --- | --- 
+--- | --- | --- | --- | ---
 Quora Question Pairs | Can you identify question pairs with same intent? | https://www.kaggle.com/c/quora-question-pairs | NLP | top 12%
