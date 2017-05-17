@@ -5,6 +5,7 @@
 
 Code hub for my Kaggle submissions / Practice. My personal learning journey. I am currently also participating in competitions with my friend.  
 
-Name | Description | Link | Type | Ranking 
+Name | Description | Link | Category | Ranking 
 --- | --- | --- | --- | ---
-[Quora Question Pairs](https://github.com/GA-datascience/Kaggle-Quora) | Can you identify question pairs with same intent? | https://www.kaggle.com/c/quora-question-pairs | NLP | top 12%
+[Quora Question Pairs](https://github.com/GA-datascience/Kaggle-Quora) | Can you identify question pairs with same intent? | https://www.kaggle.com/c/quora-question-pairs | competition | top 12%
+Housing Price Forecasting | Predict sales prices and practice feature engineering, RFs, and gradient boosting| https://www.kaggle.com/c/house-prices-advanced-regression-techniques | tutorial | top 49%
