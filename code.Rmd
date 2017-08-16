@@ -1,0 +1,230 @@
+---
+title: "Kaggle Practice: Bicycle Sharing Demand"
+output: 
+  html_document:
+    theme: lumen
+    toc: True
+---
+
+<p align= "centre">
+![](D:/kaggle/bicycle sharing demand/firefly_rest_izta.jpg)
+</p>
+
+# Importing{.tabset}
+```{r import library, warning=FALSE, message=FALSE}
+library(data.table)
+library(dplyr)
+
+library(ggplot2)
+library(plotly)
+library(caret)
+
+library(lubridate) # deals with time 
+```
+
+```{r import files }
+train <- fread('train.csv')
+test <- fread('test.csv')
+sample_sub <- fread('sampleSubmission.csv')
+```
+
+## First Overview
+
+Let us inspect the data
+
+```{r}
+head(train,10)
+```
+
+
+
+## Summary
+
+```{r}
+summary(train)
+
+```
+
+* Datetime 
+    + We need to manipulate this later. This can be broken down into more defined features 
+* Season
+    + We can see it holds values 1 - 4. This denotes the various seasons.
+    + 1 = spring, 2 = summer, 3 = fall, 4 = winter 
+* Holiday
+    + Either a holiday or not a holiday. Holds value 1/0
+* Working day 
+    + 1 = working day , 0 = holiday 
+* Weather 
+    + 1: Clear, Few clouds, Partly cloudy, Partly cloudy 
+    + 2: Mist and Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist 
+    + 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain +                Scattered clouds 
+    + 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog 
+* Temperature 
+* Feels like temperature 
+* Relative humidity 
+* Windspeed 
+* Number of casual users - non registered user rentals
+* Number of registered users - registered user rentals 
+* Count - casual + registered (total rentals)
+
+
+
+## Classes 
+
+```{r}
+#sapply(train,class)
+str(train)
+```
+
+
+---
+
+
+
+# Feature Engineering and Exploratory Analysis 
+
+As with many other competitions, feature engineering is the key apart from the modelling. Good feature engineering could make a difference in the leaderboard placing and the result of the model prediction. 
+
+Also, I decide to combine both sections together since we have to do some EDA along the way while we decide on the features to engineer. 
+
+
+## Missing Data Analysis 
+
+```{r}
+missing_count <- sapply(train,function(x)length(which(is.na(x))))
+missing_df <- data.frame(Name = colnames(train), na_count = missing_count)
+missing_df <- missing_df[order(missing_df, decreasing = TRUE),]
+missing_df
+```
+
+Interestingly, there are no missing values for all the variables. This will save us time in dealing with the NA values. 
+
+However, it is important for us to analyze the number of zeros in certain variables. (of course excluding those factor based variables) 
+
+```{r}
+zeros_count = sapply(train[,c("windspeed","weather","temp","atemp","humidity")], function(x)length(which(x == 0)))
+zeros_df <- data.frame(Name =c("windspeed","weather","temp","atemp","humidity"), zeros_count = zeros_count)
+zeros_df <- zeros_df[order(zeros_df, decreasing = TRUE),]
+zeros_df
+```
+
+Seems like we have a major problem in windspeed. There are 1313 zeros. In fact, 
+We can see that we have 12% samples with missing windspeed data. We can illusatrate this using some visualisation below: 
+
+
+
+
+```{r replacing, warning=FALSE, message=FALSE}
+train_corrected <- train
+
+train_corrected$windspeed[which(train_corrected$windspeed == 0)] <- NA
+
+library(mice)
+md.pattern(train_corrected)
+
+library(VIM)
+aggr_plot <- aggr(train_corrected, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(train_corrected), cex.axis=.7, gap=3, ylab=c("Histogram of missing data","Pattern"))
+```
+
+
+
+
+## Solving the missing data 
+
+https://www.r-bloggers.com/imputing-missing-data-with-r-mice-package/
+
+```{r}
+temp_windspeed <- mice(train_corrected, m = 5, method = "pmm", seed = 123)
+summary(temp_windspeed)
+```
+
+We can check the imputed data via: 
+```{r, eval=FALSE}
+temp_windspeed$imp$windspeed
+```
+
+Recall, we set m = 5
+
+```{r}
+
+temp_windspeed$method # check imputed data method
+train_corrected <- complete(temp_windspeed, 1) # take impute 1 
+```
+
+
+
+
+## Convert date to features 
+
+Notice that one of the column consist of the date as well as the time of each count of demand for bicycles. We can split this feature using lubridate package to maniplulate the time stamps. 
+
+```{r time-feature-extraction}
+train_good <- train_corrected %>% mutate(year = year(ymd_hms(train_corrected$datetime)), month = month(ymd_hms(train_corrected$datetime)),week = week(ymd_hms(train_corrected$datetime)), wdays = wday(ymd_hms(train_corrected$datetime)), 
+day = day(ymd_hms(train_corrected$datetime)), hour = hour((ymd_hms(train_corrected$datetime)))
+    )
+
+
+# drop off the data variable 
+train_good$datetime <- NULL
+
+# take a look 
+head(train_good,10)
+
+```
+
+
+##  Features Plot{.tabset}
+
+### Pair Plot 
+
+Some basic overview that I can pick up with a glance:
+
+* r
+
+
+```{r features- pair-plot, fig.width= 15, fig.height=15}
+featurePlot(x = train_good[,c("temp","atemp","humidity","windspeed","casual","registered")], y = train_good[,"count"], plot = "pairs", auto.key = list(columns = 3))
+```
+
+### Correlation Plot
+
+
+### Label vs Features Plot 
+
+
+
+## Outlier Analysis{.tabset}
+
+
+
+### User Count  
+
+
+```{r}
+plot1 = ggplot(train, aes(x = factor(0), y = count)) + geom_boxplot(fill = "#43a5cf") + theme_minimal() + theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) + ggtitle("Box Plot: Count")
+
+ggplotly(plot1)
+```
+ 
+
+So from the box plot, we can see that there are some outliers 
+
+## Even more visualisation 
+
+
+# Modelling{.tabset} 
+
+## Linear Regression 
+
+## LASSO 
+
+## Ridge 
+
+## Random Forest 
+
+## XGBoost 
+
+# References 
+
