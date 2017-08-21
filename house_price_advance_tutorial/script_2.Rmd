@@ -1,0 +1,440 @@
+---
+title: "Housing Price Practice - Challenge for a good score"
+author: "germayne"
+date: "April 21, 2017"
+output: 
+  html_document:
+    highlight: pygments
+    theme: spacelab
+    toc: True
+---
+
+```{r loading-libraries, warning=FALSE, include=FALSE}
+library(data.table)
+library(corrplot)
+library(plotly)
+library(ggplot2)
+library(caret)
+library(caretEnsemble)
+library(Metrics)
+library(lmtest) # bp 
+library(rms) # robust correction 
+
+library(lars) # lasso
+
+library(randomForest)
+library(party) 
+
+
+library(xgboost)
+library(Matrix)
+
+library(e1071)
+
+
+random = 12357
+```
+
+
+# Cleaning and Features
+
+
+## Cleaning 
+
+Lets load in the data, as well as check the 81 variables that we have. 
+
+
+```{r loading-data}
+
+train <- fread('train.csv', stringsAsFactors = TRUE)
+train <- data.frame(train)
+test <- fread('test.csv', stringsAsFactors = TRUE)
+test <- data.frame(test)
+names(train)
+
+# apply class to each element by columns 
+#sapply(train, class)
+
+str(train)
+```
+
+## Missing values 
+
+It is important to make it a practice to check for missing values. If a particular variable has too many missing values, we may have to remove it 
+
+```{r}
+#Num_NA<-sapply(train,function(x)length(which(is.na(x)==T)))
+Num_NA <- apply(train, 2, function(x)length(which(is.na(x)==T)))
+missing.df <- data.frame(colnames(train), Num_NA)
+missing.df <- missing.df[order(missing.df$Num_NA, decreasing = TRUE),]
+head(missing.df, 10)
+```
+
+
+
+We can see the top variables with NA. We have to remove them. Lets remove: 
+
+* poolqc
+* Miscfeature
+* alley 
+* fence
+
+```{r}
+train$PoolQC <- NULL
+train$MiscFeature <- NULL 
+train$Alley <- NULL
+train$Fence <- NULL
+
+test$PoolQC <- NULL
+test$MiscFeature <- NULL
+test$Alley <- NULL
+test$Fence <- NULL
+```
+
+
+## Features 
+
+```{r}
+# extract all numerical variables 
+all.numeric.variables.index <- sapply(train,is.numeric)
+all.numeric.variables <- train[,all.numeric.variables.index]
+
+# convert all factors into numericals variables
+for(i in 1:length(colnames(train))){
+  if(is.factor(train[,i])){
+    train[,i] <- as.integer(train[,i])
+  }
+}
+
+
+# lets check
+sapply(train, class)
+
+
+
+# do the same for the test set so we can use it later on: 
+for(i in 1:length(colnames(test))){
+  if(is.factor(test[,i])){
+    test[,i] <- as.integer(test[,i])
+  }
+}
+
+```
+
+Now, we will need to fill all the remaining NA as 0
+
+
+```{r}
+train[is.na(train)] <- 0
+all.numeric.variables[is.na(all.numeric.variables)] <- 0
+
+# do the same to test
+test[is.na(test)] <- 0 
+```
+
+
+
+# Analysis
+
+## Correlations
+
+Seems like we have some variables that have strong relationship with each other. The suspects are:
+
+* Overallqual
+* Total bmstfs
+* x1st 
+* garrage area
+* garrage cars
+* GrlivArea
+```{r, fig.height=15, fig.width=15 }
+correlation.df <- cor(all.numeric.variables[,-1])
+corrplot(correlation.df, method = "color", tl.cex = 0.5, type = "lower", sig.level = 0.05, insig = "blank", order = "hclust", addCoef.col = "black", number.cex = 0.35 ,diag = FALSE )
+```
+
+## Feature Plots 
+
+Very obvious that multicollinearity exist in this variables. 
+
+```{r, fig.width= 15, fig.height=15}
+#pairs(~SalePrice+OverallQual+TotalBsmtSF+X1stFlrSF+GarageArea+GarageCars+GrLivArea , data = train)
+
+featurePlot(x = train[,c("OverallQual","TotalBsmtSF","X1stFlrSF","GarageArea","GarageCars","GrLivArea")] ,
+y = train[,"SalePrice"],
+plot = "pairs",
+# add key at the top 
+auto.key = list(columns = 3)
+)
+
+
+
+```
+
+
+
+Also, side fact : A general upward trend the older the house, the higher the price level of the house.
+
+
+```{r}
+#ggplot(train, aes(x= YearBuilt, y = SalePrice)) + geom_point() + geom_smooth()
+theme1 <- trellis.par.get()
+theme1$plot.symbol$col = rgb(.2, .2, .2, .4)
+theme1$plot.symbol$pch = 16
+theme1$plot.line$col = rgb(1, 0, 0, .7)
+theme1$plot.line$lwd <- 2
+trellis.par.set(theme1)
+
+featurePlot(x = as.matrix(all.numeric.variables[,"YearBuilt"]), 
+            y = all.numeric.variables[,"SalePrice"],
+            plot = "scatter",
+            ## Add a key at the top
+            layout = c(1, 1),
+            type = c("p", "smooth"),
+            span = .5,
+            auto.key = list(columns = 3))
+```
+
+
+
+
+
+
+# Modelling{.tabset}   
+
+
+```{r, eval=FALSE, include=FALSE}
+set.seed(random)
+outcome <- train$SalePrice
+partition <- createDataPartition(y= outcome, p= 0.599, list =F)
+# split train into 2: 6:4 
+training_split <- train[partition,]
+testing_split <- train[-partition,]
+```
+
+
+Let us set the basic control functions that all the model will be using:
+
+```{r}
+# Create custom summary function in proper format for caret
+# http://hamelg.blogspot.sg/2016/09/kaggle-home-price-prediction-tutorial.html
+
+custom_summary = function(data, lev = NULL, model = NULL){
+    out = rmsle(data[, "obs"], data[, "pred"])
+    names(out) = c("rmsle")
+    out
+}
+
+
+fitcontrol <- trainControl(method = "cv", number = 5,savePredictions = 'final', summaryFunction = custom_summary)
+```
+
+
+
+## Linear Regression Model 
+
+
+Most basic model will be the regression model. We start by fitting all the variables as a starting benchmark.
+
+
+The resulting lm has a Very good adjusted R-square value, which says that the explainatory variables are explaining SalePrices well. At the same time, there are many variables which have no effect on SalePrices. We can now implement the stepwise algorithm for variable selection, based on AIC values.
+
+```{r model-regression}
+
+model_lg <- train(SalePrice ~., data =train[,2:77], method = "lm", trControl = fitcontrol, metric = "rmsle" )
+
+summary(model_lg)
+
+model_lg
+```
+
+Inspecting the model further: 
+
+```{r}
+plot(varImp(model_lg))
+model_lg$results
+```
+
+Also, more importantly, to do an inspection of the residual plots ... etc. At first glance, we can see from the residuals vs fitted plot that there is some non linearity in the data set. Furthermore, this also suggests that we have heteroskedasticity in the errors. (non constant variance of residuals) We can do a **BP test** to confirm our guess later. 
+
+I will assume the Normal Q-Q looks fairly straight. Not perfect. So, our residuals are pretty normal distrubuted. 
+
+Our scale plot have an obvious pattern, again confirming heteoskedasticity in the residuals. 
+```{r}
+layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE))
+plot(model_lg$finalModel)
+```
+
+
+
+## Regularized Regression Models 
+
+
+Regularized regression impose a penalty to the coefficient values of a regression model, either to the L1 Norm or L2 Norm. Let us try both a LASSo as well as a Ridge regression to compare their result here. The main parameter we will tune will be **lambda**. Not that in the scikit learn in pythom, this is known as **alpha**. But alpha in `glmnet` is for us to define lasso or ridge.   
+
+```{r}
+lambda <- 10^seq(3, -2, by = -.1)
+lasso_grid <- expand.grid(alpha = 1, lambda = lambda)
+model_lasso <- train(SalePrice~., data=train[2:77],method="glmnet", trControl= fitcontrol, tuneGrid= lasso_grid, metric="rmsle",maximize = FALSE)
+```
+
+From my understanding, a large lambda, at 1000 meant that there will be lots of feature that will have  0 coefficient (removed), since model complexity reduces as lambda increases. 
+
+```{r lasso-inspect}
+model_lasso$results
+model_lasso$bestTune
+
+```
+
+```{r}
+plot(model_lasso$finalModel)
+```
+
+
+```{r}
+varImp(model_lasso)
+plot(varImp(model_lasso))
+```
+
+
+Predicting the test set 
+
+```{r}
+prediction_lasso <- predict(model_lasso, test)
+```
+
+
+
+## Random Forest
+
+Let us implement the random forest algorithm. This time round, i will let caret do the tuning by defining `tunelength`. This algorithm will take some time to train so have patience :) 
+
+```{r rf-tuning}
+# importance will make the computation slower :/ 
+set.seed(12357)
+model_rf <- train(SalePrice~. , data = train, method = "rf", trControl = fitcontrol, metric = "rmsle", tunelength = 3, maximize = FALSE)
+```
+
+We can see that at 39 mtry and 500 trees, we have a pretty decent rmsle. An improvement to linear regression model.
+
+```{r rf-inspect}
+model_rf$results
+model_rf$bestTune
+
+model_rf$finalModel
+```
+
+
+
+Let us do the prediction of the model on the test set.
+
+```{r}
+prediction_rf <- predict(model_rf, test)
+```
+
+
+
+## XGboost
+
+
+```{r xg-tuning}
+set.seed(12357)
+xgb_grid <- expand.grid(nrounds=c(100, 200, 400, 800), max_depth= c(4, 6),eta= c(0.1, 0.05, 0.025), gamma= c(0.1), colsample_bytree = c(1), min_child_weight = c(1), subsample = 1)
+
+model_xgb <- train(SalePrice~., data=train[2:77],method="xgbTree", trControl= fitcontrol, tuneGrid= xgb_grid, metric="rmsle",maximize = FALSE)
+
+```
+
+Inspecting the permutations of the parameters that was choosen 
+
+```{r xgb-inspect}
+model_xgb$results
+
+model_xgb$bestTune
+
+```
+
+
+
+```{r xgb-importance-plot}
+varImp(model_xgb)
+```
+
+Single xgb model performance on the Public Leaderboard is 0.13594 
+
+```{r}
+prediction_xgb <- predict(model_xgb, test)
+
+```
+
+
+
+
+
+# Stacking 
+
+Some model diagnostics 
+
+```{r}
+models_list <- list(lasso = model_lasso, rf = model_rf, xgb = model_xgb)
+results <- resamples(models_list)
+```
+
+As expected, rf and xgb are fairly close due to being trees. 
+
+```{r}
+modelCor(results)
+```
+
+```{r}
+summary(results)
+dotplot(results)
+```
+
+
+
+Creating the meta features for layer 1. 
+
+```{r}
+meta_features <- data.frame(lasso = model_lasso$pred$pred[order(model_lasso$pred$rowIndex)])
+meta_features$rf <- model_rf$pred$pred[order(model_rf$pred$rowIndex)]
+meta_features$xgb <- model_xgb$pred$pred[order(model_xgb$pred$rowIndex)]
+
+meta_features$SalePrice <- train$SalePrice
+head(meta_features,10)
+```
+
+
+```{r}
+meta_test <- data.frame(lasso = prediction_lasso, rf = prediction_rf, xgb = prediction_xgb)
+```
+
+
+
+
+```{r}
+# Max shrinkage for gbm
+nl = nrow(train)
+max(0.01, 0.1*min(1, nl/10000)) # 0.0146 for shrinkage
+# Max Value for interaction.depth c(1,3,6,9,10)
+floor(sqrt(NCOL(train))) 
+set.seed(12357)
+gbm.grid <-  expand.grid(interaction.depth = c(1, 3, 6, 8),
+                    n.trees = (0:50)*50, 
+                    shrinkage = seq(.0005, .0146, .0005),
+                    n.minobsinnode = c(5, 10, 15, 20)) # you can also put something like c(5, 10, 15, 20)
+
+meta_model_1 <- train(SalePrice~. , data = meta_features, method = "gbm", trControl = fitcontrol, metric = "rmsle", maximize = FALSE)
+
+meta_model_1
+```
+
+
+
+```{r}
+submission_values <- predict(meta_model_1, meta_test)
+
+submission <- fread('sample_submission.csv')
+submission$SalePrice <- submission_values
+
+fwrite(submission, "submission1.csv")
+```
+
