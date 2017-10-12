@@ -1,7 +1,15 @@
 
-Base script from sh1ng: https://github.com/sh1ng/imba
+Base script released from sh1ng: https://github.com/sh1ng/imba
+<br>
+Big drama and anger: https://www.kaggle.com/c/instacart-market-basket-analysis/discussion/37697#211098
 
+<br>
 
+I was initially very angry as it distorted the entire leaderboard. Nevertheless, I have to adapt. The entire kaggle adapted. It was still an intensive competition. As such, when he released his script (0.40299, a top 2% score, a week earlier) >>>>> when competition ends (0.4031115, bronze last postition at 10% )
+
+<br>
+
+# How to use?
 
 LGBM model with adjustments, new features and optimized hyperparameters
 
@@ -26,11 +34,11 @@ $ python3 lgbm_submition.py # prediction with lgbm
 ** Use f1_maximization.R on generated submission_lgbm.csv**
 
 ```R
-submission <- all_prob %>%
+submission <- lgbm_submission %>%
   group_by(order_id) %>%
   summarise(products = exact_F1_max_none(new2, product_id))
 
 
-write.csv(submission, file = "final_final_final.csv", row.names = F)
+write.csv(submission, file = "final_submission.csv", row.names = F)
 
 ```
