@@ -27,9 +27,7 @@ $ python3 skip_gram_train.py
 <br>
 $ python3 skip_gram_get.py
 <br>
-$ python3 lgbm_cv.py # optional...
-<br>
-$ python3 lgbm_submition.py # prediction with lgbm
+$ python3 lgbm_submition.py 
 <br>
 ** Use f1_maximization.R on generated submission_lgbm.csv**
 
