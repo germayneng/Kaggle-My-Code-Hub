@@ -13,6 +13,7 @@ I was initially very angry as it distorted the entire leaderboard. Nevertheless,
 
 LGBM model with adjustments, new features and optimized hyperparameters
 
+* create a folder call: data with all the raw data. Download the train and test sets from kaggle. 
 $ python3 create_products.py
 <br>
 $ python3 split_data_set.py
@@ -26,6 +27,8 @@ $ python3 create_prod2vec_dataset.py
 $ python3 skip_gram_train.py
 <br>
 $ python3 skip_gram_get.py
+<br>
+$ python3 order_streaks.py
 <br>
 $ python3 lgbm_submition.py 
 <br>
