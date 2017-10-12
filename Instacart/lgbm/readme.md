@@ -6,6 +6,7 @@ Base script from sh1ng: https://github.com/sh1ng/imba
 LGBM model with adjustments, new features and optimized hyperparameters
 
 $ python3 create_products.py
+<br>
 $ python3 split_data_set.py
 $ python3 orders_comsum.py
 $ python3 user_product_rank.py
