@@ -79,5 +79,5 @@ if __name__ == '__main__':
     df = df.drop("order_number", axis=1).drop_duplicates().reset_index(drop=True)
     df = df[['user_id', 'product_id', 'order_streak']]
     print(df.head(n=10))
-    df.to_csv("order_streaks.csv", index=False)
+    df.to_csv("data/order_streaks.csv", index=False)
     print("order_streaks.csv has been written")
