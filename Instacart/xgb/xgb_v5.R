@@ -1,6 +1,6 @@
 
 # Kaggle instacart 
-# 0.399
+# 0.399 xgb, hyperparameters not optimized 
 
 
 
@@ -240,7 +240,7 @@ data$order_streak[is.na(data$order_streak)] <- 0
 
 
 # time based features from sh1ng 
-
+# generate product_period_stats.pkl from lgbm folder via python. Then generate csv for R
 product_periods <- fread('product_period_stats.csv')
 product_periods[is.na(product_periods)] <- 0 # replace the nas 
 data <- data %>% left_join(product_periods, by = c("user_id", "product_id"))
