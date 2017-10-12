@@ -1,6 +1,8 @@
 # Understanding the competition 
 
+Not in depth but something i did to understand the overall competition. 
 
+https://cdn.rawgit.com/germayneng/Kaggle-My-Code-Hub/4c4e9940/Instacart/intro/instacart_EDA.nb.html
 
 
 # Solution: 
