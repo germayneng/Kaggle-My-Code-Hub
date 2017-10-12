@@ -1,0 +1,215 @@
+---
+title: "Instacart EDA"
+author: "Germayne"
+output: 
+  html_notebook:
+    toc: True
+    toc_float: True
+---
+
+
+```{r}
+library(tidyverse)
+library(data.table)
+```
+
+```{r}
+path <- "D:\\kaggle\\instacart\\raw_data"
+
+aisles <- fread(file.path(path, "aisles.csv"))
+departments <- fread(file.path(path, "departments.csv"))
+orderp <- fread(file.path(path, "order_products__prior.csv"))
+ordert <- fread(file.path(path, "order_products__train.csv"))
+orders <- fread(file.path(path, "orders.csv"))
+products <- fread(file.path(path, "products.csv"))
+
+
+# convert some of the data types
+aisles$aisle <- as.factor(aisles$aisle)
+departments$department <- as.factor(departments$department)
+orders$eval_set <- as.factor(orders$eval_set)
+products$product_name <- as.factor(products$product_name)
+
+
+```
+
+# Preliminary Exploratory 
+
+Let us have a first look at the data structures for each files since there are many files in this competition. 
+
+## Aisles 
+
+Aisles are simply the different food categories (passage) of a grocery store.
+```{r}
+head(aisles,30)
+```
+
+
+
+```{r}
+glimpse(aisles)
+summary(aisles)
+length(unique(aisles$aisle_id))
+```
+
+
+## Departments
+
+
+I will think of departments as a broader categorization as opposed to aisles. 
+
+```{r}
+head(departments,30)
+```
+
+
+```{r}
+glimpse(departments)
+summary(departments)
+    
+```
+
+
+
+## Order Prior 
+
+```{r}
+head(orderp,30)
+```
+
+
+```{r}
+glimpse(orderp)
+summary(orderp)
+```
+
+
+## Order train 
+
+
+```{r}
+head(ordert,10)
+```
+
+
+
+```{r}
+glimpse(ordert)
+summary(ordert)
+```
+
+
+
+## Order 
+
+```{r}
+head(orders,30)
+```
+
+
+```{r}
+summary(orders)
+```
+
+
+
+## Products 
+
+
+```{r}
+head(products,30)
+```
+
+
+```{r}
+glimpse(products)
+```
+
+
+
+
+# Reshape, combine data structure 
+
+
+
+
+Note that we have 6 data set, and we must restructure them. This image will summarize the data structures: 
+
+<p align = "center">
+![](D:/kaggle/instacart/instacartFiles.png)
+</p>
+
+
+By looking at the orders dataset, users are categorized as train user and test user. And each user have a list of prior orders, which we can do features engineering on. 
+
+
+<p align = "center">
+![](D:/kaggle/instacart/train_user.png)
+</p>
+
+
+<br>
+<br>
+
+<p align = "center">
+![](D:/kaggle/instacart/test_user.png)
+</p>
+
+
+
+
+
+## Products dataframe
+
+Let us first combine **products**, **departments** as well as **aisles** into one dataframe. 
+
+```{r}
+products <- products %>% 
+  inner_join(aisles) %>% inner_join(departments) 
+#%>% select(-aisle_id, -department_id)
+rm(aisles, departments)
+
+```
+
+Let us view this new products dataframe 
+
+```{r}
+head(products,30)
+```
+
+
+
+**so far this data is not used. We can make use of this.**
+
+## Create orders_products
+
+
+Let us combine orders with order prior using inner join via their order id.
+
+This will be the list of prior orders with its product information.
+
+```{r}
+orders_products <- orders %>% inner_join(orderp, by = "order_id") # combine data such that similar rows exist
+```
+
+```{r}
+head(orders_products,30)
+```
+
+```{r}
+colnames(orders_products)
+```
+
+
+
+## Product features of prior orders (from orders_products)
+
+Some features based on unique products id:  
+
+* prod_orders: total number of orders from unique users 
+* prod_reorders: total number of reorders from all users (may be repeated)
+* prod_first_orders: total number of first orders from all unique users (based on product_time)
+* prod_second_orders: total number of second orders from all unique users (based on product_time)
+
+
+
