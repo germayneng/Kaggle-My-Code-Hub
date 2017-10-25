@@ -6,7 +6,7 @@
 <br> 
 [one hot untransform](https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/40728)
 <br>
-[https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/40599][ps car 15]
+[https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/40599](ps car 15)
 <br>
 [https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/41488#latest-233013](ps reg 12) 
 <br>
