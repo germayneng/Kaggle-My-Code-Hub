@@ -2,7 +2,7 @@
 
 
 ## Data transformation 
-[miles](https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/41489#latest-234768)
+[mileage](https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/41489#latest-234768)
 <br> 
 [one hot untransform](https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/40728)
 <br>
@@ -13,9 +13,9 @@
 [EDA on feature engineered features](https://www.kaggle.com/peatle/eda-investigating-trends)
 
 ## Modelling 
-[lgbm lb cv 0.282 and good example for cv folds in python](https://www.kaggle.com/aharless/lightgbm-cv-lb-282/notebook)
+[lgbm lb cv 0.282](https://www.kaggle.com/aharless/lightgbm-cv-lb-282/notebook)
 <br>
-[xgb upsampling](https://www.kaggle.com/tunguz/xgb-20fold-classifier-upsampling/code)
+[xgb + upsampling](https://www.kaggle.com/tunguz/xgb-20fold-classifier-upsampling/code)
 <br>
 [LGBM baseline with 0.282](https://www.kaggle.com/the1owl/forza-baseline-lightgbm-example/code)
   
