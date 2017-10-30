@@ -9,7 +9,7 @@ $ python3 lgbm.py
 # Model 1 
 
 
-```
+
 Pretty consistent cv for both. 
 
 Model | des| cv | LB |  
@@ -18,7 +18,7 @@ LGBM | normal prep | 0.28388587 | 0.278
 LGBM | ohe on 8 cat |  0.2834999 | 0.277
 LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276
 
-
+```
  Starting: fold 1
 Training until validation scores don't improve for 100 rounds.
 [100]   valid_0's auc: 0.611438 valid_0's gini: 0.222609
