@@ -6,7 +6,10 @@ $ Rscript feature_engineering.R
 <br>
 $ python3 lgbm.py 
 
-# 5 fold 
+# Model 1 
+
+Pretty consistent cv for both. 
+
 Model | des| cv | LB |  
 --- | --- | --- | --- 
 LGBM | normal prep | 0.28388587 | 0.278
