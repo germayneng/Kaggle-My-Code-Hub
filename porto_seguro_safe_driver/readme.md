@@ -8,6 +8,8 @@ $ python3 lgbm.py
 
 # Model 1 
 
+
+```
 Pretty consistent cv for both. 
 
 Model | des| cv | LB |  
@@ -300,3 +302,4 @@ Feature importances: [996, 472, 1527, 312, 822, 0, 0, 3, 0, 3, 891, 844, 865, 24
 
 
  Gini is 0.28388587677235994 for full training set (cross validation score)
+```
