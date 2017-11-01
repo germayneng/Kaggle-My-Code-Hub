@@ -14,6 +14,7 @@ Pretty consistent cv for both.
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
+X | remove ind 12 bin | 
 LGBM | remove muni original and impact original |  0.2866260257361032 | 0.278 | 0.008 | Y
 LGBM | remove impact original | 0.2853545955971464  | 0.278 | 0.008 | Y 
 LGBM | added impact | 0.2877287356566279  | 0.277 | 0.01 | Y
