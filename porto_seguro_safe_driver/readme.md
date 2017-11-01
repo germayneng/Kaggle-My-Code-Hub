@@ -12,14 +12,14 @@ $ python3 lgbm.py
 
 Pretty consistent cv for both. 
 
-Model | des| cv | LB |  
---- | --- | --- | --- 
-LGBM | remove muni original and impact original | 0.286  | 0.278
-LGBM | remove impact original | 0.2877287356566279  | 0.278
-LGBM | added impact | 0.2877287356566279  | 0.277
-LGBM | added loo | 0.3? | 0.265 ?????
-LGBM | feature selection |  0.2840037745259099 | 0.278
-LGBM | normal prep | 0.28388587 | 0.278
-LGBM | ohe on 8 cat |  0.2834999 | 0.277
-LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276
+Model | des| cv | LB |  delta 
+--- | --- | --- | --- | ---
+LGBM | remove muni original and impact original | 0.286  | 0.278 | 0.008
+LGBM | remove impact original | 0.286  | 0.278 | 0.008
+LGBM | added impact | 0.2877287356566279  | 0.277 | 0.01
+LGBM | added loo | 0.3? | 0.265 ????? | 0.035
+LGBM | feature selection |  0.2840037745259099 | 0.278 | 0.006
+LGBM | normal prep | 0.28388587 | 0.278 | 0.005
+LGBM | ohe on 8 cat |  0.2834999 | 0.277 | X
+LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276 | X 
 
