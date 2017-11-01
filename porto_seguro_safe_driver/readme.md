@@ -14,6 +14,8 @@ Pretty consistent cv for both.
 
 Model | des| cv | LB |  
 --- | --- | --- | --- 
+LGBM | remove muni original and impact original | 0.286  | 0.278
+LGBM | remove impact original | 0.2877287356566279  | 0.278
 LGBM | added impact | 0.2877287356566279  | 0.277
 LGBM | added loo | 0.3? | 0.265 ?????
 LGBM | feature selection |  0.2840037745259099 | 0.278
