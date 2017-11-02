@@ -1,4 +1,4 @@
-Model 1: score 0.28X
+Model 1: 
 
 $ python3 preprocessing.py 
 <br>
@@ -14,9 +14,9 @@ Pretty consistent cv for both.
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-X | baseline + municipal | X | X | X 
-X | added interaction term | 0.2862096393150962 | 0.277 | 0.009  | N
-X | remove ind 12 bin | 0.28677517691685267 | 0.278 | 0.008 | Y 
+LGBM | added neg function |  |  |   | 
+LGBM | added interaction term | 0.2862096393150962 | 0.277 | 0.009  | N
+LGBM | remove ind 12 bin | 0.28677517691685267 | 0.278 | 0.008 | Y 
 LGBM | remove muni original and impact original |  0.2866260257361032 | 0.278 | 0.008 | Y
 LGBM | remove impact original | 0.2853545955971464  | 0.278 | 0.008 | Y 
 LGBM | added impact | 0.2877287356566279  | 0.277 | 0.01 | Y
