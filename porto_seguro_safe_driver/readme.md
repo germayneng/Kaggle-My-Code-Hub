@@ -13,6 +13,13 @@ $ python3 lgbm_submission.pt
 
 Pretty consistent cv for both. 
 
+ 0.28629249306268223
+
+## RE-work 
+Model | des| cv | LB |  delta | implemented? 
+LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | Y 
+
+## Deprecated
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
 LGBM | added neg function | 0.2865639445401815  | 0.278  |   | 
