@@ -9,14 +9,9 @@ $ python3 lgbm_cv_folds.py / $ python3 lgbm_cv.py
 $ python3 lgbm_submission.pt
 # Model 1 
 
-
-
-Pretty consistent cv for both. 
-
- 0.28629249306268223
-
 ## RE-work 
 Model | des| cv | LB |  delta | implemented? 
+--- | --- | --- | --- | --- | ---
 LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | Y 
 
 ## Deprecated
