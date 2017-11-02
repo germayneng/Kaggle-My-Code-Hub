@@ -12,7 +12,7 @@ $ python3 lgbm_submission.pt
 ## RE-work 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-LGBM | readded cat 11 |  0.2871075115416951 |  |  | Y 
+LGBM | re-added cat 11 |  0.2871075115416951 |  | lgbmsub4 | Y 
 LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | Y 
 
 ## Deprecated
