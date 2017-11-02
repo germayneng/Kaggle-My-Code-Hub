@@ -4,8 +4,9 @@ $ python3 preprocessing.py
 <br>
 $ Rscript feature_engineering.R
 <br>
-$ python3 lgbm.py 
-
+$ python3 lgbm_cv_folds.py / $ python3 lgbm_cv.py 
+<br>
+$ python3 lgbm_submission.pt
 # Model 1 
 
 
