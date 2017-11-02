@@ -15,7 +15,7 @@ Pretty consistent cv for both.
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-LGBM | added neg function |  |  |   | 
+LGBM | added neg function | 0.2865639445401815  | 0.278  |   | 
 LGBM | added interaction term | 0.2862096393150962 | 0.277 | 0.009  | N
 LGBM | remove ind 12 bin | 0.28677517691685267 | 0.278 | 0.008 | Y 
 LGBM | remove muni original and impact original |  0.2866260257361032 | 0.278 | 0.008 | Y
