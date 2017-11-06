@@ -9,12 +9,14 @@ $ python3 lgbm_cv_folds.py / $ python3 lgbm_cv.py
 $ python3 lgbm_submission.pt
 # Model 1 
 
+## Stratified 
+
 ## RE-work 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-LGBM | edit some preprocess | 0.28693208414804006  |  | lgbmsub5 | compare with ind12
-LGBM | re-added cat 11 |  0.2871075115416951 |  | lgbmsub4 | compare with ind12
-LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | Y 
+LGBM | edit some preprocess | 0.28693208414804006  | low 0.278 |  | compare with ind12
+LGBM | re-added cat 11 |  0.2871075115416951 | low 0.278 |  | compare with ind12
+LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | baseline2 
 
 ## Deprecated
 Model | des| cv | LB |  delta | implemented? 
@@ -31,3 +33,11 @@ LGBM | normal prep | 0.28388587 | 0.278 | 0.005 | Y
 LGBM | ohe on 8 cat |  0.2834999 | 0.277 | X | N
 LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276 | X | N 
 
+
+# Model 2 
+
+## F fold 
+
+Model | des| cv | LB |  delta | implemented? 
+--- | --- | --- | --- | --- | ---
+xgb | baseline2  |   |   |   | 
