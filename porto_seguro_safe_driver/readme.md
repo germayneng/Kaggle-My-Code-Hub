@@ -44,3 +44,11 @@ xgb | baseline2_814, en05  | 0.2871167008138052   | ?   |   | Y
 xgb | baseline2_814, loo05  | 0.28650274214897986  | 0.28   |   | N, overfit. inverse movement 
 xgb | baseline2_1050  |  0.2875797135558472 | 0.279 but lower than V   |   | N
 xgb | baseline2_814  | 0.2873501489301373  | 0.279   |   | Y 
+
+## S Fold
+
+Model | des| cv | LB |  delta | implemented? 
+--- | --- | --- | --- | --- | ---
+xgb | baseline2_814, en05 | 0.28805958095903894   | ?   |   | X
+xgb | baseline2_814  |  0./// | ?   |   |  X
+
