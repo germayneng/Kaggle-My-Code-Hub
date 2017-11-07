@@ -50,5 +50,5 @@ xgb | baseline2_814  | 0.2873501489301373  | 0.279   |   | Y
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
 xgb | baseline2_814, en05 | 0.28805958095903894   | ?   |   | X
-xgb | baseline2_814  |  0./// | ?   |   |  X
+xgb | baseline2_814  |  0.2785577327825596 | ?   |   |  X
 
