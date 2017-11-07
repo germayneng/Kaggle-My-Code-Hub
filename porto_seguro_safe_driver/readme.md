@@ -36,10 +36,10 @@ LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276 | X | N
 
 # Model 2 
 
-## F fold 
+## k fold 
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-xgb | baseline2_814, loo05  | ?  | ?   |   | Y 
+xgb | baseline2_814, loo05  | 0.28650274214897986  | 0.28   |   | N, overfit. inverse movement 
 xgb | baseline2_1050  |  0.2875797135558472 | 0.279 but lower than V   |   | N
 xgb | baseline2_814  | 0.2873501489301373  | 0.279   |   | Y 
