@@ -49,6 +49,8 @@ xgb | baseline2_814  | 0.2873501489301373  | 0.279   |   | Y
 
 ## S Fold
 
+S-fold is not doing as well as you can see. Refer to [this.](https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/41037)
+
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
 xgb | baseline2_814, en05,encar12 |  0.2887965920565725  | 0.277  | 0.01 | N
