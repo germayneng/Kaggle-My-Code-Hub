@@ -11,6 +11,10 @@ $ python3 lgbm_submission.pt
 
 ## K fold 
 
+## Keeper
+
+LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | baseline2 
+
 ### RE-work 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
@@ -36,11 +40,16 @@ LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276 | X | N
 
 # Model 2 
 
+
+## Keeper 
+
+xgb | baseline2_814  | 0.2873501489301373  | 0.279   |   | Y 
+
 ## k fold 
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-xgb | baseline2_814, encar14 |  0.284  | 0.278  | X | N
+xgb | baseline2_814, encar14 |  0.2943067953855803   | 0.277  | X | N
 xgb | baseline2_814, en05,encar12 |  0.28789409224075085  | 0.278  | X | N
 xgb | baseline2_814,encar12 |   0.28022041475594334  | 0.267  | X | N
 xgb | baseline2_814, en05  | 0.2871167008138052   | 0.279 but lower than baseline, higher than 1050  |   | N 
