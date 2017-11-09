@@ -40,8 +40,9 @@ LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276 | X | N
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
+xgb | baseline2_814, encar14 |  0.284  | 0.278  | X | N
 xgb | baseline2_814, en05,encar12 |  0.28789409224075085  | 0.278  | X | N
-xgb | baseline2_814,encar12 |   0.28022041475594334  | 0.269  | X | N
+xgb | baseline2_814,encar12 |   0.28022041475594334  | 0.267  | X | N
 xgb | baseline2_814, en05  | 0.2871167008138052   | 0.279 but lower than baseline, higher than 1050  |   | N 
 xgb | baseline2_814, loo05  | 0.28650274214897986  | 0.28   |   | N, overfit. inverse movement 
 xgb | baseline2_1050  |  0.2875797135558472 | 0.279 but lower than V   |   | N
