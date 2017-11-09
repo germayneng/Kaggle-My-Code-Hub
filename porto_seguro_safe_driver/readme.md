@@ -49,6 +49,7 @@ xgb | baseline2_814  | 0.2873501489301373  | 0.279   |   | Y
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
+xgb | baseline2_814, encar14 +o_car14 |  0.29445888872158726    | 0.277  | X | N
 xgb | baseline2_814, encar14 |  0.2943067953855803   | 0.277  | X | N
 xgb | baseline2_814, en05,encar12 |  0.28789409224075085  | 0.278  | X | N
 xgb | baseline2_814,encar12 |   0.28022041475594334  | 0.267  | X | N
