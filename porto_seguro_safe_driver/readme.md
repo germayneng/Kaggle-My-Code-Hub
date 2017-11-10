@@ -9,6 +9,9 @@ $ python3 lgbm_cv_folds.py / $ python3 lgbm_cv.py
 $ python3 lgbm_submission.pt
 # Model 1 
 
+
+benchmark to beat: X  | X
+
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
  | en11,11 + en6, 06  |  0.28825969783038985 |  ?  |  ? |  X 
@@ -20,6 +23,7 @@ benchmark to beat: 0.28774070939103197  | 0.282
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
+xgb | en1, 01 | ?  |  ?  | ?  |  X
 xgb | en6, o6 | 0.28774070939103197  | 0.282(best)   |  0.005 |  Y
 xgb | en11, ocar11 | 0.28689584177200333  |  0.282  | 0.004895841772  |  Y
 xgb | en11 seed vary | 0.2873501489301373   |  X  | X  |  X
