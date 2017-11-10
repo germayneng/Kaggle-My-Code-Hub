@@ -18,6 +18,9 @@ Model | des| cv | LB |  delta | implemented?
 --- | --- | --- | --- | --- | ---
 
 
+
+
+
 ### Deprecated
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
@@ -42,7 +45,8 @@ LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276 | X | N
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-xgb |   |   |    |   |  
+xgb | encar11, encar14, ocar11, ocar14  | 0.2956987984323126  |    |   |  X
+xgb | encar11, encar14, ocar11, ocar14  | 0.2956987984323126  | 0.279   | 0.  |  X
 
 
 ## Deprecated 
