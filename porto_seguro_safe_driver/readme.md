@@ -12,8 +12,6 @@ $ python3 lgbm_submission.pt
 ## K fold 
 
 
-LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | baseline2 
-
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
 
