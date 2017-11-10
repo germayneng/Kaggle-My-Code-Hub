@@ -11,7 +11,7 @@ $ python3 lgbm_submission.pt
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
- |  |   |    |   |  
+ | en11,11 + en6, 06  |  0.28825969783038985 |  ?  |  ? |  X 
 
 
 # Model 2 
