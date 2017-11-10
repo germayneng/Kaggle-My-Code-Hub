@@ -11,20 +11,19 @@ $ python3 lgbm_submission.pt
 
 ## K fold 
 
-## Keeper
 
 LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | baseline2 
 
-### RE-work 
+Model | des| cv | LB |  delta | implemented? 
+--- | --- | --- | --- | --- | ---
+
+
+### Deprecated
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
 LGBM | edit some preprocess | 0.28693208414804006  | low 0.278 |  | compare with ind12
 LGBM | re-added cat 11 |  0.2871075115416951 | low 0.278 |  | compare with ind12
 LGBM | remove ind 12 bin | 0.28629249306268223 | 0.278 | 0.008 | baseline2 
-
-### Deprecated
-Model | des| cv | LB |  delta | implemented? 
---- | --- | --- | --- | --- | ---
 LGBM | added neg function | 0.2865639445401815  | 0.278  |   | 
 LGBM | added interaction term | 0.2862096393150962 | 0.277 | 0.009  | N
 LGBM | remove ind 12 bin | 0.28677517691685267 | 0.278 | 0.008 | Y 
@@ -41,11 +40,14 @@ LGBM | LOO on 1618, 0609 | 0.28337639620598 | 0.276 | X | N
 # Model 2 
 
 
-## Keeper 
+Model | des| cv | LB |  delta | implemented? 
+--- | --- | --- | --- | --- | ---
+xgb |   |   |    |   |  
 
-xgb | baseline2_814  | 0.2873501489301373  | 0.279   |   | Y 
 
-## k fold 
+## Deprecated 
+
+### k fold 
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
@@ -58,7 +60,7 @@ xgb | baseline2_814, loo05  | 0.28650274214897986  | 0.28   |   | N, overfit. in
 xgb | baseline2_1050  |  0.2875797135558472 | 0.279 but lower than V   |   | N
 xgb | baseline2_814  | 0.2873501489301373  | 0.279   |   | Y 
 
-## S Fold
+### S Fold
 
 S-fold is not doing as well as you can see. Refer to [this.](https://www.kaggle.com/c/porto-seguro-safe-driver-prediction/discussion/41037)
 
