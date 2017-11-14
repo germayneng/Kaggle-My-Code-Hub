@@ -19,11 +19,11 @@ Model | des| cv | LB |  delta | implemented?
 
 # Model 2 
 
-benchmark to beat: 0.28905027132813627   |  0.282
+benchmark to beat: 0.28994119365130144   |  0.282
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-xgb | en4, 04 | ?   |  ?  | ?  |  
+xgb | en4, 04 |  0.28994119365130144   |  0.282  | ?  |  
 xgb | en1, 01 | 0.28905027132813627   |  0.282  | ?  |  Y
 xgb | en6, o6 | 0.28774070939103197  | 0.282(best)   |  0.005 |  Y
 xgb | en11, ocar11 | 0.28689584177200333  |  0.282  | 0.004895841772  |  Y
