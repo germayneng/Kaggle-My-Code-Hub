@@ -24,12 +24,12 @@ Model | des| cv | LB |  delta | implemented?
 ## SKF 
 
 
-benchmark to beat: 0.2907152600232563  | X
+benchmark to beat: X | X
 
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-xgb | ohe |  0.2907152600232563  |    | ?  | Y
+xgb | ohe |  0.2920562162020719  | 0.282   | ?  | Y
 
 
 
