@@ -30,7 +30,7 @@ benchmark to beat: 0.2907152600232563  | 0.282(best) ( KF)
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-xgb | add us |    |    | ?  | Y
+xgb | add us |  0.29153705495951765  |    | ?  | Y
 xgb | ohe |  0.2920562162020719  | 0.282   | ?  | Y
 
 
