@@ -20,11 +20,24 @@ Model | des| cv | LB |  delta | implemented?
 
 # Model 2 
 
+
+## SKF 
+
+
+benchmark to beat: 0.2907152600232563  | X
+
+
+Model | des| cv | LB |  delta | implemented? 
+--- | --- | --- | --- | --- | ---
+xgb | ohe |  0.2907152600232563  |    | ?  | Y
+
+
+
 benchmark to beat: 0.2907152600232563  | 0.282(best)
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
-xgb | ohe |  0.2907152600232563  | 0.282(best)   | ?  | Y
+xgb | ohe |  0.2907152600232563  | 0.282(best)   | 0.008  | Y
 xgb | lce ind 05 cat |  0.2891376153868709  |    | ?  | X
 xgb | en4, 04 |  0.28994119365130144   |  0.282  | ?  | Y
 xgb | en1, 01 | 0.28905027132813627   |  0.282  | ?  |  Y
