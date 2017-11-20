@@ -21,19 +21,20 @@ Model | des| cv | LB |  delta | implemented?
 # Model 2 
 
 
+benchmark to beat: 0.2907152600232563  | 0.282(best) ( KF) 
+
+
 ## SKF 
 
-
-benchmark to beat: X | X
 
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
+xgb | add us |    |    | ?  | Y
 xgb | ohe |  0.2920562162020719  | 0.282   | ?  | Y
 
 
-
-benchmark to beat: 0.2907152600232563  | 0.282(best)
+## KF 
 
 Model | des| cv | LB |  delta | implemented? 
 --- | --- | --- | --- | --- | ---
